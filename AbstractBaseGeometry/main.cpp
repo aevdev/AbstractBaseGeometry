@@ -1,4 +1,5 @@
 #define _USE_MATH_DEFINES //нужно для того, чтобы в данном случае мы могли использовать число Pi
+#define M_SORT3 1.73205080757
 #pragma warning(disable:4326)
 
 #include<Windows.h>
@@ -365,6 +366,226 @@ namespace Geometry
 			cout << "C side:\t" << c_side << endl;
 			Shape::info();
 		}
+	};
+
+	class EquilateralTriangle : public Shape
+	{
+		double a_side;
+	public:
+		double get_a_side()const
+		{
+			return a_side;
+		}
+
+		void set_a_side(double a_side)
+		{
+			this->a_side = a_side;
+		}
+
+		EquilateralTriangle (double a_side,
+			Color color, size_t start_x, size_t start_y, size_t line_width)
+			:Shape(color, start_x, start_y, line_width)
+		{
+			set_a_side(a_side);
+		}
+		~EquilateralTriangle() {}
+
+		double get_area()const
+		{
+			return (M_SORT3 / 4) * (a_side * a_side);
+		}
+		double get_perimeter()const
+		{
+			return a_side + a_side + a_side;
+		}
+
+		void draw()const
+		{
+			//H - Handle(обработчик/рукоятка). В общем говоря, это штука, через которую мы можем обратиться к окну, контексту устройства, карандашу(pen) и т.д.
+			HWND hConsole = GetConsoleWindow();					//Получаем окно консоли, чтобы к нему можно было обратиться.
+			HDC hdc = GetDC(hConsole);							// Создаем контекст устройства для полученного окна
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);	//Создаем карандаш, который будет рисовать контур
+			//PS_SOLID - сплошная линия, 5 - толщина линии 5 пикслелей, RGB(...) - цвет.
+			SelectObject(hdc, hPen);							//Выбираем  созданный карандаш, чтобы им можно было рисовать
+			HBRUSH hBrush = CreateSolidBrush(color);	//Создаем кисть. Кисть закрашивает замкнутые фигуры
+			SelectObject(hdc, hBrush);							//Выбираем созданную кисть
+			//Кисть и карандаш выбираются для того, чтобы функция Rectangle понимала чем рисовать
+
+			POINT* Temp = new POINT(start_x, start_y);
+			::Polygon(hdc, Temp, 3);					//Рисует треугольник
+
+			//Удаляем созданную кисть и карандаш:
+			DeleteObject(hBrush);
+			DeleteObject(hPen);
+			//Освобождаем контекст устройства: (контекст устройства - это то, на чем мы рисуем. У окна есть контекст и на нем можно рисовать)
+			ReleaseDC(hConsole, hdc);
+		}
+
+		void info()const
+		{
+			cout << typeid(this).name() << endl;
+			cout << "Equilateral triangle side:\t" << a_side << endl;
+			Shape::info();
+		}
+	};
+
+	class IsoscalesTriangle : public Shape
+	{
+		double a_side;
+		double b_side;
+	public:
+		double get_a_side()const
+		{
+			return a_side;
+		}
+		double get_b_side()const
+		{
+			return b_side;
+		}
+
+		void set_a_side(double a_side)
+		{
+			this->a_side = a_side;
+		}
+		void set_b_side(double b_side)
+		{
+			this->b_side = b_side;
+		}
+
+		double get_height()const
+		{
+			return 2 * sqrt((a_side * a_side) - (b_side * 0.5) * (b_side * 0.5));
+		}
+
+		IsoscalesTriangle(double a_side, double b_side,
+			Color color, size_t start_x, size_t start_y, size_t line_width)
+			:Shape(color, start_x, start_y, line_width)
+		{
+			set_a_side(a_side);
+			set_b_side(b_side);
+		}
+		~IsoscalesTriangle() {}
+
+		double get_area()const
+		{
+			return 0.5 * a_side * get_height();
+		}
+		double get_perimeter()const
+		{
+			return a_side + a_side + b_side;
+		}
+
+		void draw()const
+		{
+			//H - Handle(обработчик/рукоятка). В общем говоря, это штука, через которую мы можем обратиться к окну, контексту устройства, карандашу(pen) и т.д.
+			HWND hConsole = GetConsoleWindow();					//Получаем окно консоли, чтобы к нему можно было обратиться.
+			HDC hdc = GetDC(hConsole);							// Создаем контекст устройства для полученного окна
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);	//Создаем карандаш, который будет рисовать контур
+			//PS_SOLID - сплошная линия, 5 - толщина линии 5 пикслелей, RGB(...) - цвет.
+			SelectObject(hdc, hPen);							//Выбираем  созданный карандаш, чтобы им можно было рисовать
+			HBRUSH hBrush = CreateSolidBrush(color);	//Создаем кисть. Кисть закрашивает замкнутые фигуры
+			SelectObject(hdc, hBrush);							//Выбираем созданную кисть
+			//Кисть и карандаш выбираются для того, чтобы функция Rectangle понимала чем рисовать
+
+			POINT* Temp = new POINT(start_x, start_y);
+			::Polygon(hdc, Temp, 3);					//Рисует треугольник
+
+			//Удаляем созданную кисть и карандаш:
+			DeleteObject(hBrush);
+			DeleteObject(hPen);
+			//Освобождаем контекст устройства: (контекст устройства - это то, на чем мы рисуем. У окна есть контекст и на нем можно рисовать)
+			ReleaseDC(hConsole, hdc);
+		}
+
+		void info()const
+		{
+			cout << typeid(this).name() << endl;
+			cout << "Side:\t" << a_side << endl;
+			cout << "Bottom side:\t" << b_side << endl;
+			Shape::info();
+		}
+
+		class RightTriangle : public Shape
+		{
+			double a_side;
+			double b_side;
+			double c_side;
+		public:
+			double get_a_side()const
+			{
+				return a_side;
+			}
+			double get_b_side()const
+			{
+				return b_side;
+			}
+			double get_c_side()const
+			{
+				return c_side;
+			}
+
+			void set_a_side(double a_side)
+			{
+				this->a_side = a_side;
+			}
+			void set_b_side(double b_side)
+			{
+				this->b_side = b_side;
+			}
+			void set_c_side(double a_side, double b_side)
+			{
+				this->c_side = sqrt((a_side * a_side) + (b_side * b_side));
+			}
+
+			RightTriangle(double a_side, double b_side,
+				Color color, size_t start_x, size_t start_y, size_t line_width)
+				:Shape(color, start_x, start_y, line_width)
+			{
+				set_a_side(a_side);
+				set_b_side(b_side);
+				set_c_side(a_side, b_side);
+			}
+			~RightTriangle() {}
+
+			double get_area()const
+			{
+				return (a_side * b_side) * 0.5;
+			}
+			double get_perimeter()const
+			{
+				return a_side + b_side + c_side;
+			}
+
+			void draw()const
+			{
+				//H - Handle(обработчик/рукоятка). В общем говоря, это штука, через которую мы можем обратиться к окну, контексту устройства, карандашу(pen) и т.д.
+				HWND hConsole = GetConsoleWindow();					//Получаем окно консоли, чтобы к нему можно было обратиться.
+				HDC hdc = GetDC(hConsole);							// Создаем контекст устройства для полученного окна
+				HPEN hPen = CreatePen(PS_SOLID, line_width, color);	//Создаем карандаш, который будет рисовать контур
+				//PS_SOLID - сплошная линия, 5 - толщина линии 5 пикслелей, RGB(...) - цвет.
+				SelectObject(hdc, hPen);							//Выбираем  созданный карандаш, чтобы им можно было рисовать
+				HBRUSH hBrush = CreateSolidBrush(color);	//Создаем кисть. Кисть закрашивает замкнутые фигуры
+				SelectObject(hdc, hBrush);							//Выбираем созданную кисть
+				//Кисть и карандаш выбираются для того, чтобы функция Rectangle понимала чем рисовать
+
+				POINT* Temp = new POINT(start_x, start_y);
+				::Polygon(hdc, Temp, 3);					//Рисует треугольник
+
+				//Удаляем созданную кисть и карандаш:
+				DeleteObject(hBrush);
+				DeleteObject(hPen);
+				//Освобождаем контекст устройства: (контекст устройства - это то, на чем мы рисуем. У окна есть контекст и на нем можно рисовать)
+				ReleaseDC(hConsole, hdc);
+			}
+
+			void info()const
+			{
+				cout << typeid(this).name() << endl;
+				cout << "A side:\t" << a_side << endl;
+				cout << "B side:\t" << b_side << endl;
+				cout << "C side:\t" << c_side << endl;
+				Shape::info();
+			}
 	};
 }
 
